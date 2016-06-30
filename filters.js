@@ -2,11 +2,19 @@
 
 class Filters {
   int(value, radix) {
-    return parseInt((value || '').toString(), radix || 10);
+    value = parseInt((value || '').toString(), radix || 10);
+    if (isNaN(value)) {
+      throw new Error('Value is not a number');
+    }
+    return value;
   }
 
   float(value) {
-    return parseFloat((value || '').toString());
+    value = parseFloat((value || '').toString());
+    if (isNaN(value)) {
+      throw new Error('Value is not a number');
+    }
+    return value;
   }
 
   trim(value) {

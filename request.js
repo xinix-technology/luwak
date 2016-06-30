@@ -2,8 +2,10 @@
 
 class Request {
   constructor(context) {
-    this.context = context;
-    this.req = context.req;
+    if (context) {
+      this.context = context;
+      this.req = context.req;
+    }
   }
 
   get header() {
@@ -195,8 +197,11 @@ class Request {
 
   get type() {
     const type = this.get('Content-Type');
-    if (!type) return '';
-    return type.split(';')[0];
+    if (!type) {
+      return '';
+    } else {
+      return type.split(';')[0];
+    }
   }
 
   get(field) {

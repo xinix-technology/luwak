@@ -1,7 +1,6 @@
 'use strict';
 
 const luwak = require('../index');
-const cheerio = require('cheerio');
 
 try {
   var scraper = new luwak.Scraper("http://sagara.id/p/portfolio");

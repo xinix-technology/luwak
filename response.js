@@ -75,11 +75,11 @@ class Response {
     }
 
     // buffer
-    if (Buffer.isBuffer(val)) {
-      if (setType) this.type = 'bin';
-      this.length = val.length;
-      return;
-    }
+    // if (Buffer.isBuffer(val)) {
+    //   if (setType) this.type = 'bin';
+    //   this.length = val.length;
+    //   return;
+    // }
 
     // stream
     // if ('function' == typeof val.pipe) {
@@ -208,21 +208,19 @@ class Response {
     }
   }
 
-  append(field, val) {
-    const prev = this.get(field);
+  // append(field, val) {
+  //   const prev = this.get(field);
 
-    if (prev) {
-      val = Array.isArray(prev)
-        ? prev.concat(val)
-        : [prev].concat(val);
-    }
+  //   if (prev) {
+  //     val = Array.isArray(prev) ? prev.concat(val) : [prev].concat(val);
+  //   }
 
-    return this.set(field, val);
-  }
-
-  // remove(field) {
-  //   this.res.removeHeader(field);
+  //   return this.set(field, val);
   // }
+
+  remove(field) {
+    this.res.removeHeader(field);
+  }
 
   // get writable() {
   //   const socket = this.res.socket;

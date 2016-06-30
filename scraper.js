@@ -118,43 +118,41 @@ class Scraper {
             if (_fromFn) {
               options.$from = url.resolve(originFrom, _fromFn($root));
             } else {
-              throw new Error('Unimplemented yet!');
+              options.$body = selector.$body;
             }
-            let childScraper = new Scraper(options, originSelf);
+            let childScraper = new Scraper(options);
             childScraper.engine(originSelf.engine());
             return childScraper.fetch();
           };
-        } else {
-          let fields = [];
-          for(let i in selector) {
-            if ('$root' === i) continue;
-            fields.push([i, this.compile(selector[i])]);
-          }
-
-          let _mapObject = function(i, el) {
-            return Promise.all(fields.map(field => {
-              return field[1](cheerio(el));
-            }))
-            .then(result => {
-              return fields.reduce((obj, field, k) => {
-                obj[field[0]] = result[k];
-                return obj;
-              }, {});
-            });
-          }.bind(this);
-
-          return function($root) {
-            $root = selector.$root ? $root.find(selector.$root) : $root;
-            if (multi) {
-              return Promise.all(
-                $root.map(_mapObject).get()
-              );
-            } else {
-              return _mapObject(0, $root);
-            }
-          };
         }
-        break;
+        let fields = [];
+        for(let i in selector) {
+          if ('$root' === i) continue;
+          fields.push([i, this.compile(selector[i])]);
+        }
+
+        let _mapObject = function(i, el) {
+          return Promise.all(fields.map(field => {
+            return field[1](cheerio(el));
+          }))
+          .then(result => {
+            return fields.reduce((obj, field, k) => {
+              obj[field[0]] = result[k];
+              return obj;
+            }, {});
+          });
+        }.bind(this);
+
+        return function($root) {
+          $root = selector.$root ? $root.find(selector.$root) : $root;
+          if (multi) {
+            return Promise.all(
+              $root.map(_mapObject).get()
+            );
+          } else {
+            return _mapObject(0, $root);
+          }
+        };
       case 'string':
         let rawFilters = selector.split('|').map(s => s.trim());
         let sel = rawFilters.shift().split('@').map(s => s.trim());
@@ -178,10 +176,7 @@ class Scraper {
           }
 
           value = filters.reduce((value, filter) => {
-            if (value instanceof Promise) {
-              return value.then(v => filter(value));
-            }
-            return filter(value);
+            return Promise.resolve(value).then(v => filter(value));
           }, value);
 
           // TODO filters
@@ -207,13 +202,37 @@ class Scraper {
    * @return {Promise}
    */
   fetch(fn) {
-    let data = [];
-    let eachCallback = function(row) {
-      data.push(row);
-      if (typeof fn === 'function') {
-        fn(row);
+    // let data = [];
+    // let eachCallback = function(row) {
+    //   data.push(row);
+    //   if (typeof fn === 'function') {
+    //     fn(row);
+    //   }
+    // };
+
+    let _getValue = function() {
+      let $root = this.getRoot(this.body);
+      let valuePromised;
+      if (this.compiled) {
+        valuePromised = this.compiled($root);
+      } else if ($root) {
+        valuePromised = $root.text();
+      } else {
+        valuePromised = this.body;
       }
-    };
+
+      valuePromised = Promise.resolve(valuePromised);
+
+      if (fn) {
+        valuePromised.then(data => {
+          if (data !== null && data !== undefined) {
+            (Array.isArray(data) ? data : [data]).forEach(row => fn(row));
+          }
+          return data;
+        });
+      }
+      return valuePromised;
+    }.bind(this);
 
     if (this.from) {
       let engine = this.engine();
@@ -221,10 +240,10 @@ class Scraper {
       return engine(context)
         .then(function() {
           this.body = context.body;
-          return this.compiled(this.getRoot(this.body));
+          return _getValue();
         }.bind(this));
     } else {
-      return Promise.resolve(this.compiled(this.getRoot(this.body)));
+      return _getValue();
     }
 
   }

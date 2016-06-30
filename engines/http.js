@@ -7,11 +7,10 @@ module.exports = function(options) {
 
   // console.log('using engine: http');
   return function(context) {
-
     return agent
       .get(context.url)
       .set(context.headers)
-      .then(function(res) {
+      .then((res) => {
         context.status = res.status;
         context.set(res.headers);
         context.body = 'application/json' == context.type ? res.body : res.text;
@@ -20,12 +19,18 @@ module.exports = function(options) {
         context.url = res.redirects.length ? res.redirects.pop() : context.url;
 
         return context;
-      }, function(e) {
-        if (e && !e.status) {
-          throw e;
-        }
-        context.status = e.status;
-        return context;
+      })
+      .catch((e) => {
+        // with new superagent i dont think we need this anymore since error will be automatically http error
+        // if (e && !e.status) {
+        //   // might not be here anyway!
+        //   console.error(e.stack);
+        //   context.status = 500;
+        //   return context;
+        // } else {
+          context.status = e.status;
+          return context;
+        // }
       });
   };
 };

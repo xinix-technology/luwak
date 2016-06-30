@@ -34,7 +34,7 @@ try {
     .select([{
       '$root': 'li.product',
       'name': '.product-name',
-      'labels': 'label',
+      'labels': ['label'],
     }])
     .fetch()
     .then((data) => {

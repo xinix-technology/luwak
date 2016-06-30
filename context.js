@@ -5,18 +5,18 @@ const Request = require('./request');
 const Response = require('./response');
 
 var HttpRequest;
-try {
-  HttpRequest = require('http-incoming').IncomingMessage;
-} catch (e) {
+// try {
+//   HttpRequest = require('http-incoming').IncomingMessage;
+// } catch (e) {
   HttpRequest = require('http').IncomingMessage;
-}
+// }
 
 var HttpResponse;
-try {
-  HttpResponse = require('http-outgoing').OutgoingMessage;
-} catch (e) {
+// try {
+//   HttpResponse = require('http-outgoing').OutgoingMessage;
+// } catch (e) {
   HttpResponse = require('http').OutgoingMessage;
-}
+// }
 
 
 class Context {

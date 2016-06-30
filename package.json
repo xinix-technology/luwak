@@ -19,7 +19,8 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-istanbul": "^1.0.0",
-    "gulp-mocha": "^2.2.0"
+    "gulp-mocha": "^2.2.0",
+    "sinon": "^1.17.4"
   },
   "repository": {
     "type": "git",
