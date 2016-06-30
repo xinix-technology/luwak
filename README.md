@@ -1,41 +1,87 @@
-# luwak
+# Luwak
 
 Luwak is animal that eat coffee beans and poop beans out as best coffee in the world.
 
 The philosophy is vast internet data already rich in web pages kind, somehow for our application we need clean data. With luwak we can extract and scrape data from web pages.
 
-Snippet how to use.
+## How to use
+
+Install using npm,
+
 ```
-const luwak = require('../lib/index');
-const co = require('co');
-const url = require('url');
+npm i luwak
+```
 
-const destinationUrl = 'http://example.net/some-list.html';
+Then write the code,
 
-luwak
-  .prepare('urlParse', function(urlString) {
-    return url.parse(urlString);
-  })
-  .use(require('luwak/lib/middlewares/user-agent')('Googlebot/2.1 (+http://www.google.com/bot.html)'))
-  .use(require('luwak/lib/middlewares/http-engine')());
+```
+const luwak = require('luwak');
 
-co(function *() {
-  try {
-    var data = yield luwak(destinationUrl)
-      .select([
-        {
-          '$root': '.pd',
-          'title': '.m > a',
-          'url': '.m > a@href',
-          'websiteTitle': luwak('.m > a@href').select('title'),
+luwak('http://example.net/some-list.html')
+    .select([{
+        '$root': '.pd',
+        'title': '.m > a',
+        'url': '.m > a@href',
+        'websiteTitle': {
+            '$from': '.m > a@href'
+            '$select': 'title',
         },
-        // 'a@href'
-      ])
-      .paginate('a[rel=next]@href', 10)
-      .start();
-    console.log(data);
-  } catch(e) {
-    console.error('<E>', e.stack);
-  }
-});
+    }]) // or .select(['a@href'])
+    fetch()
+    .then(data => console.log(data))
+    .catch(err => console.error(err.stack));
 ```
+
+## API
+
+TBD
+
+### Scraper#select()
+
+Specify selector to define data result structure
+
+see Selectors
+
+### Scraper#engine()
+
+TBD
+
+## Selectors
+
+Selector can be specified in four ways:
+
+### as string
+
+CSS-based selectors and specification to acquire data from attributes, innerText, or innerHTML with `@` (default to innerText).
+
+### as select object
+
+Define structure that build result data as composite of string-based selectors.
+
+As opposed to scrape object, select object does not have `$from` or `$body` property.
+
+### as scrape object
+
+Define structure that build child scraping unit and embed the result data.
+
+As opposed to select object, scrape object have `$from` or `$body` property. Select object may defined in `$select` property.
+
+### as array
+
+Tell scraper to fetch the selector wrapped by array as multi-valued result data.
+
+## Built-in Filters
+
+There are several built-in filters to be used right away.
+
+### int(radix)
+
+Parse and prepare to int
+
+### float()
+
+Parse and prepare to float
+
+### trim()
+
+Trim empty characters out

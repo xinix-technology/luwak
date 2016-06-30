@@ -1,20 +1,28 @@
 {
   "name": "luwak",
-  "version": "1.0.1",
-  "description": "fetch and scrap",
-  "main": "lib/index.js",
+  "version": "2.0.0",
+  "description": "Luwak is web scraper",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ganesha <reekoheek@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^0.19.0",
-    "co": "^4.6.0",
-    "format-parser": "0.0.2",
-    "koa-compose": "^2.3.0",
-    "mkdirp": "^0.5.1",
-    "superagent": "^1.4.0",
-    "x-ray-crawler": "^2.0.2"
+    "cheerio": "^0.20.0",
+    "delegates": "^1.0.0",
+    "superagent": "^2.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-istanbul": "^1.0.0",
+    "gulp-mocha": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/reekoheek/luwak.git"
   }
 }
