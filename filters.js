@@ -1,8 +1,17 @@
 'use strict';
 
 class Filters {
+  substr(value, start, length) {
+    return (value || '').toString().substr(start, length);
+  }
+
+  default(value, defValue) {
+    return ('' === value || null === value || undefined === value) ? defValue : value;
+  }
+
   int(value, radix) {
-    value = parseInt((value || '').toString(), radix || 10);
+    let oldValue = value;
+    value = parseInt((value || '0').toString(), radix || 10);
     if (isNaN(value)) {
       throw new Error('Value is not a number');
     }
@@ -10,7 +19,7 @@ class Filters {
   }
 
   float(value) {
-    value = parseFloat((value || '').toString());
+    value = parseFloat((value || '0').toString());
     if (isNaN(value)) {
       throw new Error('Value is not a number');
     }
