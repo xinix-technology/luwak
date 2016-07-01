@@ -3,13 +3,10 @@
 const luwak = require('../index');
 
 try {
-  var scraper = new luwak.Scraper("https://www.bukalapak.com/products?utf8=%E2%9C%93&search%5Bkeywords%5D=ikat+pinggang");
-
-  scraper.filter('hitung', function(value) {
-    return value.split(' ').length;
-  });
-
-  scraper
+  luwak('https://www.bukalapak.com/products?utf8=%E2%9C%93&search%5Bkeywords%5D=ikat+pinggang')
+    .filter('hitung', function(value) {
+      return value.split(' ').length;
+    })
     .select([{
       '$root': '.product-display',
       'name': '.product-description h3 a',
@@ -17,6 +14,10 @@ try {
       'price': {
         '$from': '.product-description h3 a@href',
         '$select': '.product-detailed-price .amount | float'
+      },
+      'peminat': {
+        '$from': '.product-description h3 a@href',
+        '$select': '.kvp__value[title=Peminat]'
       }
     }])
     .fetch()
