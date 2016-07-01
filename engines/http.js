@@ -21,16 +21,15 @@ module.exports = function(options) {
         return context;
       })
       .catch((e) => {
-        // with new superagent i dont think we need this anymore since error will be automatically http error
-        // if (e && !e.status) {
-        //   // might not be here anyway!
-        //   console.error(e.stack);
-        //   context.status = 500;
-        //   return context;
-        // } else {
+        if (e && !e.status) {
+          throw e;
+          // console.error(e.stack);
+          // context.status = 500;
+          // return context;
+        } else {
           context.status = e.status;
           return context;
-        // }
+        }
       });
   };
 };
