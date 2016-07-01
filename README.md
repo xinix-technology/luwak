@@ -46,6 +46,10 @@ see Selectors
 
 TBD
 
+### Scraper#use()
+
+Add new middleware.
+
 ## Selectors
 
 Selector can be specified in four ways:
@@ -70,6 +74,18 @@ As opposed to select object, scrape object have `$from` or `$body` property. Sel
 
 Tell scraper to fetch the selector wrapped by array as multi-valued result data.
 
+## Built-in Engines
+
+TBD
+
+### http (default)
+
+TBD 
+
+### nightmare
+
+TBD
+
 ## Built-in Filters
 
 There are several built-in filters to be used right away.
@@ -85,3 +101,11 @@ Parse and prepare to float
 ### trim()
 
 Trim empty characters out
+
+## Built-in Middlewares
+
+TBD
+
+### user-agent
+
+TBD

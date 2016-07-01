@@ -1,6 +1,6 @@
 {
   "name": "luwak",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Luwak is web scraper",
   "main": "index.js",
   "directories": {
