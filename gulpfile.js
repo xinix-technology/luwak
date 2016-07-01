@@ -22,6 +22,8 @@ gulp.task('pre-coverage', () => {
 });
 
 gulp.task('coverage', ['pre-coverage'], () => {
+  process.env.COVERAGE = true;
+
   return gulp.src(['test/**/*.js'])
     .pipe(mocha())
     .pipe(istanbul.writeReports({
