@@ -62,6 +62,7 @@ class Response {
     // }
 
     // set the status
+    /* istanbul ignore else */
     if (!this._explicitStatus) this.status = 200;
 
     // set the content-type only if not yet set
@@ -69,6 +70,7 @@ class Response {
 
     // string
     if ('string' == typeof val) {
+      /* istanbul ignore else */
       if (setType) this.type = /^\s*</.test(val) ? 'html' : 'text';
       this.length = Buffer.byteLength(val);
       return;

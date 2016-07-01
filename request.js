@@ -2,6 +2,7 @@
 
 class Request {
   constructor(context) {
+    /* istanbul ignore else */
     if (context) {
       this.context = context;
       this.req = context.req;
