@@ -3,12 +3,14 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const Scraper = require('../scraper');
+const url = require('url');
+const qs = require('querystring');
 
 describe('Scraper', () => {
   describe('constructor', () => {
     it('accept no argument', () => {
       let scraper = new Scraper();
-      assert(scraper.from === undefined);
+      assert(!scraper.from);
     });
 
     it('accept argument as string', () => {
@@ -39,7 +41,6 @@ describe('Scraper', () => {
 
     it('not accept argument as other types', () => {
       assert.throws(() => new Scraper(33), /Scraper only accept string or object/);
-      assert.throws(() => new Scraper(false), /Scraper only accept string or object/);
     });
   });
 
@@ -76,10 +77,10 @@ describe('Scraper', () => {
     });
 
     it ('get filter if only specify one parameter', () => {
-      assert(!scraper.cacheFilters.trim);
+      assert(!scraper._cacheFilters.trim);
       let trim = scraper.filter('trim');
       assert(typeof trim === 'function');
-      assert(scraper.cacheFilters.trim);
+      assert(scraper._cacheFilters.trim);
       trim = scraper.filter('trim');
     });
 
@@ -277,10 +278,53 @@ describe('Scraper', () => {
     });
   });
 
+  describe('#limit()', () => {
+    let scraper = new Scraper();
+    it('set page limit when parameter specified', () => {
+      scraper.limit(33);
+      assert.equal(scraper.pageLimit, 33);
+    });
+
+    it('return page limit when parameter not specified', () => {
+      assert.equal(scraper.limit(), 33);
+    });
+  });
+
+  describe('#next()', () => {
+    let scraper;
+    beforeEach(() => scraper = new Scraper('http://foo'));
+
+    it('set nextFn when parameter specified', () => {
+      scraper.next('foo');
+      assert(typeof scraper.nextFn === 'function');
+      let nextFn = function() {};
+      scraper.next(nextFn);
+      assert.equal(scraper.nextFn, nextFn);
+    });
+
+    it('return next url when parameter not specified', () => {
+      scraper.body = '<a href="http://bar/">bar</a>';
+      scraper.nextFn = function() {
+        return 'foo';
+      };
+      scraper.limit(1);
+      assert.equal(scraper.next(), 'foo');
+
+      scraper.next('a@href');
+      assert.equal(scraper.next(), 'http://bar/');
+    });
+  });
+
   describe('#fetch()', () => {
     it('returns promise', () => {
       let scraper = new Scraper('http://foo');
       assert(scraper.fetch() instanceof Promise);
+    });
+
+    it('throws error when reader function not specified on paginated scraping', () => {
+      let scraper = new Scraper();
+      scraper.isPaginated = () => true;
+      assert.throws(() => scraper.fetch());
     });
 
     it('invoke engine if from specified', (done) => {
@@ -381,6 +425,71 @@ describe('Scraper', () => {
           done();
         })
         .catch(err => done(err));
+    });
+
+    it('run middlewares', (done) => {
+      let scraper = new Scraper('http://foo');
+      let flags = [false, false];
+      scraper.use((context, next) => {
+        flags[0] = true;
+        return next();
+      });
+      scraper.use((context, next) => {
+        flags[1] = true;
+      });
+      scraper
+        .fetch()
+        .then(() => {
+          assert(flags);
+          done();
+        })
+        .catch(e => done(e));
+    });
+
+    it('run with error on middleware throws', (done) => {
+      let scraper = new Scraper('http://foo');
+      scraper.use((context, next) => {
+        throw new Error('something happened');
+      });
+      scraper
+        .fetch()
+        .then(() => {
+          done(new Error('Error not throws'));
+        })
+        .catch(e => done());
+    });
+
+    it('fetches paginated scraping', (done) => {
+      let bodies = [
+        'body 1',
+        'body 2',
+        'body 3',
+      ];
+      let result = [];
+      let scraper = new Scraper('http://foo?page=1');
+      scraper.engine(function(context) {
+        let page = qs.parse(url.parse(context.url).query).page;
+        context.body = bodies[page-1];
+        return Promise.resolve(context);
+      });
+
+      scraper
+        .next((s) => {
+          let page = parseInt(qs.parse(url.parse(s.from).query).page);
+          if (bodies[page]) {
+            return 'http://foo?page=' + (page + 1);
+          }
+        })
+        .fetch(reader)
+        .then(() => {
+          assert.deepEqual(result, bodies);
+          done();
+        })
+        .catch(err => done(err));
+
+      function reader(row) {
+        result.push(row);
+      }
     });
   });
 });
