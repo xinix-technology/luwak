@@ -14,13 +14,15 @@
   "dependencies": {
     "cheerio": "^0.20.0",
     "delegates": "^1.0.0",
+    "nightmare": "^2.5.2",
     "superagent": "^2.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
-    "sinon": "^1.17.4"
+    "sinon": "^1.17.4",
+    "sprintf-js": "^1.0.3"
   },
   "repository": {
     "type": "git",
