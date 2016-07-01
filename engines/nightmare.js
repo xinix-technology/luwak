@@ -16,12 +16,12 @@ module.exports = function(options) {
 
         /* istanbul ignore else */
         if (nightmare.evaluate) {
-          return nightmare.evaluate(evaluateFn);
+          return nightmare.evaluate(evaluateFn).end();
+        } else {
+          return nightmare.end();
         }
       })
       .then(body => {
-        nightmare.end();
-
         context.body = body;
         return context;
       })

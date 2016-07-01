@@ -15,10 +15,6 @@ try {
         '$from': '.product-description h3 a@href',
         '$select': '.product-detailed-price .amount | float'
       },
-      'peminat': {
-        '$from': '.product-description h3 a@href',
-        '$select': '.kvp__value[title=Peminat]'
-      }
     }])
     .fetch()
     .then((data) => {
