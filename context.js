@@ -4,20 +4,8 @@ const delegate = require('delegates');
 const Request = require('./request');
 const Response = require('./response');
 
-var HttpRequest;
-// try {
-//   HttpRequest = require('http-incoming').IncomingMessage;
-// } catch (e) {
-  HttpRequest = require('http').IncomingMessage;
-// }
-
-var HttpResponse;
-// try {
-//   HttpResponse = require('http-outgoing').OutgoingMessage;
-// } catch (e) {
-  HttpResponse = require('http').OutgoingMessage;
-// }
-
+var HttpRequest = require('http').IncomingMessage;
+var HttpResponse = require('http').OutgoingMessage;
 
 class Context {
   constructor(url) {
@@ -52,7 +40,6 @@ delegate(Context.prototype, 'response')
 /**
  * Request delegation.
  */
-
 delegate(Context.prototype, 'request')
   .method('acceptsLanguages')
   .method('acceptsEncodings')
