@@ -1,26 +1,25 @@
 {
   "name": "luwak",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Luwak is web scraper",
   "main": "index.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha -- -u exports -R spec"
   },
   "author": "Ganesha <reekoheek@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "cheerio": "^0.20.0",
     "delegates": "^1.0.0",
-    "nightmare": "^2.5.2",
     "superagent": "^2.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "gulp-istanbul": "^1.0.0",
-    "gulp-mocha": "^2.2.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.0",
     "sinon": "^1.17.4",
     "sprintf-js": "^1.0.3"
   },
