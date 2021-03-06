@@ -192,7 +192,7 @@ async function acquire (src, browser) {
 }
 
 function isUrl (u) {
-  return (u || '').split('://').length > 1;
+  return !!(u || '').match(/^(\w+):\/\//);
 }
 
 async function release () {
