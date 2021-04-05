@@ -166,7 +166,7 @@ let globalBrowser;
 
 async function getGlobalBrowser () {
   if (!globalBrowser) {
-    globalBrowser = await puppeteer.launch();
+    globalBrowser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   }
 
   return globalBrowser;
